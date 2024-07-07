@@ -1,0 +1,8 @@
+ATG
+TGC
+GCA
+CAT
+ATC
+TCG
+CGA
+GAT
