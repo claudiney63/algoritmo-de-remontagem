@@ -8,7 +8,6 @@ def write_kmers_to_file(sequence, k, output_file):
     with open(output_file, 'w') as file:
         file.write(kmers)
 
-# Exemplo de uso:
 sequence = "AGGCATGCG"
 k = 5
 output_file = "kmers.txt"
