@@ -1,68 +1,82 @@
 from collections import defaultdict, deque
 
-def read_kmers(input_file):
-    with open(input_file, 'r') as file:
-        kmers = file.readline().strip().split(',')
-    kmers = [kmer for kmer in kmers if kmer]
-    return kmers
+class DeBruijnGraph:
+    def __init__(self):
+        self.grafo = defaultdict(list)
+        self.grau_entrada = defaultdict(int)
+        self.grau_saida = defaultdict(int)
 
-def bruijn_graph(kmers):
-    graph = defaultdict(list)
-    in_degree = defaultdict(int)
-    out_degree = defaultdict(int)
-    
-    for kmer in kmers:
-        prefix = kmer[:-1]
-        suffix = kmer[1:]
-        graph[prefix].append(suffix)
-        out_degree[prefix] += 1
-        in_degree[suffix] += 1
-    
-    return graph, in_degree, out_degree
+    def construir_grafo(self, kmers):
+        """Constrói o grafo de Bruijn a partir dos k-mers."""
+        for kmer in kmers:
+            prefixo = kmer[:-1]
+            sufixo = kmer[1:]
+            self.grafo[prefixo].append(sufixo)
+            self.grau_saida[prefixo] += 1
+            self.grau_entrada[sufixo] += 1
 
-def find_eulerian_path(graph, in_degree, out_degree):
-    start_node = None
-    end_node = None
-    
-    for node in graph:
-        if out_degree[node] - in_degree[node] == 1:
-            start_node = node
-        elif in_degree[node] - out_degree[node] == 1:
-            end_node = node
+    def encontrar_caminho_euleriano(self):
+        """Encontra o caminho Euleriano no grafo de Bruijn."""
+        no_inicio = None
+        no_fim = None
+        
+        for no in self.grafo:
+            if self.grau_saida[no] - self.grau_entrada[no] == 1:
+                no_inicio = no
+            elif self.grau_entrada[no] - self.grau_saida[no] == 1:
+                no_fim = no
 
-    if not start_node:
-        start_node = list(graph.keys())[0]
-    
-    stack = [start_node]
-    path = deque()
+        if not no_inicio:
+            no_inicio = list(self.grafo.keys())[0]
+        
+        pilha = [no_inicio]
+        caminho = deque()
 
-    while stack:
-        current_node = stack[-1]
-        if graph[current_node]:
-            next_node = graph[current_node].pop()
-            stack.append(next_node)
-        else:
-            path.appendleft(stack.pop())
-    
-    return list(path)
+        while pilha:
+            no_atual = pilha[-1]
+            if self.grafo[no_atual]:
+                proximo_no = self.grafo[no_atual].pop()
+                pilha.append(proximo_no)
+            else:
+                caminho.appendleft(pilha.pop())
+        
+        return list(caminho)
 
-def assemble_sequence_from_path(path):
-    sequence = path[0]
-    for node in path[1:]:
-        sequence += node[-1]
-    return sequence
+class SequenciaAssembler:
+    def __init__(self, arquivo_entrada, arquivo_saida):
+        self.arquivo_entrada = arquivo_entrada
+        self.arquivo_saida = arquivo_saida
 
-def write_sequence_to_file(sequence, output_file):
-    with open(output_file, 'w') as file:
-        file.write(sequence)
+    def ler_kmers(self):
+        """Lê os k-mers de um arquivo de entrada."""
+        with open(self.arquivo_entrada, 'r') as file:
+            kmers = file.readline().strip().split(',')
+        kmers = [kmer for kmer in kmers if kmer]
+        return kmers
+
+    def montar_sequencia_do_caminho(self, caminho):
+        """Monta a sequência original a partir do caminho Euleriano."""
+        sequencia = caminho[0]
+        for no in caminho[1:]:
+            sequencia += no[-1]
+        return sequencia
+
+    def escrever_sequencia_no_arquivo(self, sequencia):
+        """Escreve a sequência montada em um arquivo de saída."""
+        with open(self.arquivo_saida, 'w') as file:
+            file.write(sequencia)
+
+    def executar(self):
+        kmers = self.ler_kmers()
+        grafo = DeBruijnGraph()
+        grafo.construir_grafo(kmers)
+        caminho_euleriano = grafo.encontrar_caminho_euleriano()
+        sequencia = self.montar_sequencia_do_caminho(caminho_euleriano)
+        self.escrever_sequencia_no_arquivo(sequencia)
 
 # Exemplo de uso:
-input_file = "kmers.txt"
-output_file = "ClaudineySilva.txt"
-kmers = read_kmers(input_file)
+arquivo_entrada = "generate-kmers-output.txt" # Arquivo de entrada com os kmers separados por vírgula
+arquivo_saida = "ClaudineySilva.txt"
 
-graph, in_degree, out_degree = bruijn_graph(kmers)
-eulerian_path = find_eulerian_path(graph, in_degree, out_degree)
-sequence = assemble_sequence_from_path(eulerian_path)
-
-write_sequence_to_file(sequence, output_file)
+assembler = SequenciaAssembler(arquivo_entrada, arquivo_saida)
+assembler.executar()
