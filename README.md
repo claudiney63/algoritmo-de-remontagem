@@ -30,4 +30,4 @@ AGGCA,ATGCG,CATGC,GCATG,GGCAT
 
 O arquivo de saída (ClaudineySilva.txt) conterá a sequência montada.
 
- ![image](https://github.com/claudiney63/algoritmo-de-remontagem/assets/40923082/6ace394c-d8a0-4f6c-b928-9af6b676b23a)
+![alt text](image.png)
