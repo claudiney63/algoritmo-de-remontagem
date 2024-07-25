@@ -34,8 +34,8 @@ class KmerFileHandler:
         self.escrever_kmers_no_arquivo(kmers)
 
 # Exemplo de uso:
-arquivo_entrada = "generate-kmers-input.txt" # Arquivo de entrada com a sequência e o valor de k
-arquivo_saida = "generate-kmers-output.txt" # Arquivo de saída com os k-mers separados por vírgula
+arquivo_entrada = "input.txt" # Arquivo de entrada com a sequência e o valor de k
+arquivo_saida = "output.txt" # Arquivo de saída com os k-mers separados por vírgula
 
 processador = KmerFileHandler(arquivo_entrada, arquivo_saida)
 processador.processar()

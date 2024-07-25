@@ -75,7 +75,7 @@ class SequenciaAssembler:
         self.escrever_sequencia_no_arquivo(sequencia)
 
 # Exemplo de uso:
-arquivo_entrada = "generate-kmers-output.txt" # Arquivo de entrada com os kmers separados por vírgula
+arquivo_entrada = "output.txt" # Arquivo de entrada com os kmers separados por vírgula
 arquivo_saida = "ClaudineySilva.txt"
 
 assembler = SequenciaAssembler(arquivo_entrada, arquivo_saida)
